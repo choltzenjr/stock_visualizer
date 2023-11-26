@@ -1,12 +1,17 @@
 from script import fetch_all_stock_data 
 import matplotlib.pyplot as plt
+from stock import plot_stock_data
+
+#part 1 project, don't use
 
 #Ask the user to enter the stock symbol for the company they want data for.
 #and return data for said company
-def getSymbol():
-   while True:
-        stock_symbol = input("\nenter the stock symbol for the company (or 'exit' to quit):  ")
+def get_symbol():
+    stock_symbol = input("\nenter the stock symbol for the company (or 'exit' to quit):  ")
+    return stock_symbol
 
+def getSymbol_data(stock_symbol):
+   while True:
         if stock_symbol.lower() == 'exit':
             exit()
 
@@ -28,15 +33,8 @@ def get_time_series_function():
     print("4. TIME_SERIES_MONTHLY")
     time_series = input("Enter the number: ")
 
-    time_series_dict = {
-        "1": "TIME_SERIES_INTRADAY",
-        "2": "TIME_SERIES_DAILY",
-        "3": "TIME_SERIES_WEEKLY",
-        "4": "TIME_SERIES_MONTHLY"
-    }
-
     # Return the function name if the number is valid, otherwise return None
-    return time_series_dict.get(time_series, None)
+    return time_series
 
 # Asks the user for the type of graph they want to see
 def getGraphType():
@@ -75,18 +73,52 @@ def visualizeStockData(data, graph_type):
     plt.xticks(rotation=45)
     plt.show()
 
+def get_dates():
+    start_date = input("Enter the start date (YYYY-MM-DD): ")
+    end_date = input("Enter the end date (YYYY-MM-DD): ")
+    return start_date, end_date
+
+def get_plot_stock_data(stock_symbol, graphType, time_series):
+    if graphType == '1':
+        graphType = 'line'
+    elif graphType == '2':
+        graphType = 'bar'
+
+    
+    while True:
+        start_date, end_date = get_dates()
+
+        # Validate user input for date range and chart type
+        if end_date > start_date:
+            # Call the plot_stock_data function with user input as arguments
+            plot_stock_data(stock_symbol, graphType, time_series, start_date, end_date)
+            break
+        else:
+            print("Invalid date range. Please try again.")
+
+
+
+#Kelly Sun 11-16-2023
 def main():
     print("Stock Data Visualizer")
     print("------------------------")
-    stockData = getSymbol()
+    stock_symbol = get_symbol()
+    stockData = getSymbol_data(stock_symbol)
 
     if stockData:
         graphType = getGraphType()
         visualizeStockData(stockData, graphType)
         
     time_series = get_time_series_function()
+    # print(stock_symbol)
+    # print(graphType)
+    # print(time_series)
+    # print(start_date)
+    # print(end_date)
+    
     if time_series is not None:
-        print(f"Selected time series function: {time_series}")
+        get_plot_stock_data(stock_symbol, graphType, time_series)
+
     else:
         print("Invalid selection.")
 
